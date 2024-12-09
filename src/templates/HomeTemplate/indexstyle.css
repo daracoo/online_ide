@@ -40,4 +40,99 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
   }
 
+  /* General styles for mobile responsiveness */
+/* General styles for mobile responsiveness */
+@media (max-width: 768px) {
   
+  /* Full container styling for mobile */
+  .container-fluid {
+    padding: 0;
+  }
+
+  /* Stack left-container and right-container vertically */
+  .home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .left-container {
+    width: 100%;
+    padding: 50px;
+    text-align: center;
+    background-color: black;
+    color: white;
+  }
+
+  /* Header at the top with the logo */
+  .left-container img {
+    width: 400px; /* Adjusted logo size to make it bigger */
+    margin-bottom: 10px;
+  }
+
+  /* Center the button */
+  .leftbtn {
+    margin: 10px auto;
+    width: auto;
+  }
+
+  /* Right-container adjustments */
+  .right-container {
+    width: 100%;
+    padding: 15px;
+  }
+
+  /* Title alignment with spacing */
+  .title {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 15px; /* Added space between My Projects and New Folder button */
+  }
+
+  .title h2 {
+    margin-bottom: 0; /* Removed extra margin */
+    font-size: 27px;
+  }
+
+  .title button {
+    width: auto;
+  }
+
+  /* Folder layout */
+  .folderstitle {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .folderitems {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .card {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .card img {
+    height: 80px;
+    width: 80px;
+  }
+
+  /* Add some spacing */
+  .hr1 {
+    margin: 10px 0;
+  }
+}
+
+@media (min-width: 752.8px) and (max-width: 1003.2px) {
+  .leftlogo {
+    width: 120%;  /* Adjust the image width as needed */
+    max-width: 140%;
+  }
+
+  .leftbtn{
+    font-size: 15px;
+  }
+}

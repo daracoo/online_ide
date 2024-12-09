@@ -73,3 +73,127 @@
        height: 100px;
        width: 100px;
   }
+
+  /* General styles for mobile responsiveness */
+  @media (max-width: 768px) {
+  
+    /* Full container styling for mobile */
+    .container-fluid {
+      padding: 0;
+    }
+  
+    /* Stack left-container and right-container vertically */
+    .home {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .left-container {
+      width: 100%;
+      padding: 20px;
+      text-align: center;
+      background-color: black;
+      color: white;
+    }
+  
+    /* Header at the top with the logo */
+    .left-container img {
+      width: 400px; /* Adjusted logo size to make it bigger */
+      margin-bottom: 20px;
+    }
+  
+    /* Center the button */
+    .leftbtn {
+      margin: 10px auto;
+      width: auto;
+      font-size: 16px;
+    }
+
+    .rightbtn{
+      width: auto;
+      font-size: 14px;
+    }
+  
+    /* Right-container adjustments */
+    .right-container {
+      width: 100%;
+      padding: 15px;
+      margin-top: 10px;
+    }
+  
+    /* Title alignment with spacing */
+    .title {
+      flex-direction:row;
+      justify-content: space-between;
+      text-align: center;
+      padding-top: 20px;
+    }
+    
+    .hr1{
+      padding-bottom: 40px;
+    }
+
+    .title h2 {
+      margin-bottom: 0; /* Removed extra margin */
+    }
+  
+    .title button {
+      width: auto;
+    }
+  
+    /* Folder layout */
+    .folderstitle {
+      font-size: 18px;
+      text-align: center;
+    }
+  
+    .folderitems {
+      display: flex; /* Ensure flexbox is used */
+      gap: 12px; /* Adjust the value as needed */
+    }
+
+    .card {
+      flex-direction: row;
+      align-items: center;
+      height: auto; /* Let the card height adjust naturally */
+      margin-bottom: 15px;
+    }
+  
+    .card img {
+      height: 60px;
+      width: 60px;
+    }
+  
+    .card-body {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 0 10px; /* Add some padding between the image and text */
+    }
+  
+    .card-title {
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+  
+    .card-text {
+      font-size: 14px;
+    }
+  
+    .card-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .templatebtn {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+  }
+

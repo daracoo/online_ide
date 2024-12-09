@@ -19,7 +19,7 @@ export const HomeTemplate = () => {
     <div className="container-fluid h-100 home">
       <div className="row full-height">
         <div className="col-5 left-container">
-          <img src="https://i.ibb.co/8B22xhv/Code-Editor.png" alt="logo"></img>
+          <img src="https://i.ibb.co/8B22xhv/Code-Editor.png" className='leftlogo' alt="logo"></img>
           <button className="btn btn-light leftbtn px-4" onClick={openCreateProjectModal}>
             <span>Create a new project</span>
             <FontAwesomeIcon
