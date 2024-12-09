@@ -1,0 +1,43 @@
+ html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  .full-height {
+    height: 100vh; 
+  }
+
+  .home{
+    width:100%;
+  }
+
+.left-container {
+    background-color: black;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column; 
+  }
+
+  .right-container {
+    background-color: white;
+    color: black;
+  }
+
+
+  .leftbtn {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    background-color: #f5deb3;
+    font-size:18px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .leftbtn:hover {
+    background-color: wheat;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    transform: scale(1.1); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  }
+
+  

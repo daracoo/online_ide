@@ -1,0 +1,90 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Transparency effect */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 30px;
+    box-shadow: 2px 2px 2px rgba(245, 222, 179, 0.5);
+    border: rgb(245, 222, 179);
+    border-width: 10px;
+    border-style: solid;
+    width: 500px; /* Adjust the width as needed */
+    border-radius: 40px;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .modal-title {
+    margin: 0;
+    
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  .form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    margin-right: 10px; /* Space between label and input */
+    width: 50%; /* Control the width of the label */
+  }
+  
+  .form-control {
+    width: 50%; /* Make the input field take up the remaining space */
+    background-color: #f5deb3;
+    }
+  
+  .dropdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+  }
+  
+  .dropdown-row .form-control {
+    width: 40%; /* Make the dropdown smaller to fit with the button */
+    background-color: #f5deb3;
+
+}
+  
+  .btn-create {
+    background-color: #f5deb3;
+    color: black;
+    font-weight: 500;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 40%; /* Smaller width to fit next to the dropdown */
+  }
+  
+ 
+  
+  .inputtext {
+    font-size: 20px;
+  }

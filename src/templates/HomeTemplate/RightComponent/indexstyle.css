@@ -1,0 +1,75 @@
+.right-container {
+    background-color: white;
+    color: black;
+  }
+
+  .myprojectstitle{
+    font-size: 30px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 400;
+  }
+
+  .rightbtn{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    width: 140px;
+    background-color: wheat;
+    height: 40px;
+}
+
+.rightbtn:hover {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    background-color: wheat; 
+  }
+
+
+  .folderstitle{
+    /* font-family:'Courier New', Courier, monospace; */
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-size: 20px;
+  }
+
+  .folderitems button {
+    margin: 0px;
+    padding: 0px;
+  }
+
+  /* Style the card title */
+.card-title {
+    font-size: 19px;
+    font-weight: bold;
+  }
+  
+  /* Style the card description */
+  .card-text {
+    font-size: 15px;
+  }
+  
+  /* Add rounded corners to the image */
+  .img-fluid {
+    border-radius: 10px;
+  }
+  
+  .card {
+    height: 100px; /* Set a fixed height */
+    display: flex; /* Use flexbox for consistent alignment */
+    flex-direction: column; /* Stack content vertically */
+    justify-content: center; /* Center content vertically */
+    overflow: hidden; /* Prevent content from overflowing */
+}
+.card-body {
+    flex-grow: 1; /* Allow body to fill available space */
+    display: flex; /* Ensure content alignment within the card body */
+    flex-direction: column;
+    justify-content: center;
+    align-items: start; /* Align content to the start horizontally */
+}
+  .card:hover {
+    transform: translateY(-10px); /* Moves the card slightly up */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Adds a stronger shadow */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition */
+  }
+
+  .card img {
+       height: 100px;
+       width: 100px;
+  }
