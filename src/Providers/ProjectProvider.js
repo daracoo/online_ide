@@ -1,67 +1,69 @@
-import { createContext, useContext, useEffect, useState} from "react";
-import {v4} from 'uuid'
+import { createContext, useContext, useEffect, useState } from "react";
+import { v4 } from "uuid";
 
 export const ProjectContext = createContext();
 
 const initialData = [
-    {
+  {
+    id: v4(),
+    title: "Folder1",
+    files: [
+      {
         id: v4(),
-        title: 'Folder1',
-        files: [
-            {
-                id:v4(),
-                title: 'template1',
-                code: 'cout<<"hello world";',
-                language: 'cpp'
-            },
-            {
-                id:v4(),
-                title: 'template2',
-                code: 'cout<<"hello world";',
-                language: 'cpp'
-            },
-
-        ]
-    },
-    {
+        title: "template1",
+        code: 'cout<<"hello world";',
+        language: "cpp",
+      },
+      {
         id: v4(),
-        title: 'Folder2',
-        files: [
-            {
-                id:v4(),
-                title: 'template3',
-                code: 'cout<<"hello world";',
-                language: 'cpp'
-            },
-            
-
-        ]
-    },
-
-
+        title: "template2",
+        code: 'cout<<"hello world";',
+        language: "cpp",
+      },
+    ],
+  },
+  {
+    id: v4(),
+    title: "Folder2",
+    files: [
+      {
+        id: v4(),
+        title: "template3",
+        code: 'cout<<"hello world";',
+        language: "cpp",
+      },
+    ],
+  },
 ];
 
 const defaultCodes = {
-  'cpp': `#include <iostream>
+  cpp: `#include <iostream>
 using namespace std;
 int main() {
   cout << "Hello World!";
   return 0;
 }`,
 
-  'javascript': `console.log("Hello World!");`,
+  javascript: `console.log("Hello World!");`,
 
-  'python': `print("Hello World")`,
+  python: `print("Hello World")`,
 
-  'java': `public class Main {
+  java: `public class Main {
     public static void main(String[] args) {
         System.out.println("Hello World");
     }
-  }`
+  }`,
 };
 
-export const ProjectProvider = ({children}) => {
-  const [folders, setFolders] = useState(initialData);
+export const ProjectProvider = ({ children }) => {
+  const [folders, setFolders] = useState(() => {
+    const localData = localStorage.getItem('data');
+    if(localData)
+    {
+      return JSON.parse(localData);
+    }
+    return initialData;
+  });
 
   const createNewProject = (newProject) => {
     const { folderName, templateName, language } = newProject;
@@ -80,20 +82,23 @@ export const ProjectProvider = ({children}) => {
     });
     localStorage.setItem("data", JSON.stringify(newFolders));
     setFolders(newFolders);
-  }
+  };
 
   useEffect(() => {
-    localStorage.setItem("data", JSON.stringify(folders));
+    if(!localStorage.getItem('data'))
+    {
+      localStorage.setItem("data", JSON.stringify(folders));
+    }
   }, []);
 
   const projectFeatures = {
     folders,
-    createNewProject
-  }
+    createNewProject,
+  };
 
   return (
     <ProjectContext.Provider value={projectFeatures}>
       {children}
     </ProjectContext.Provider>
   );
-}
+};
