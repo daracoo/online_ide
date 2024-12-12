@@ -6,10 +6,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEdit, faTrashAlt, faFolder, faFolderOpen} from '@fortawesome/free-solid-svg-icons';
 import { useContext } from 'react';
 import { ProjectContext } from '../../../Providers/ProjectProvider';
+import { Modal } from 'bootstrap';
+import { modalConstants, ModalContext } from '../../../Providers/ModalProvider';
 
 
 
-const Folder = ({folderTitle, cards}) => {
+const Folder = ({folderTitle, cards, id}) => {
+
+  const {deleteFolder} = useContext(ProjectContext);
+
+  const onDeleteFolder = () => {
+    deleteFolder(id);
+  };
+
     return (
       <>
         <div className="d-flex justify-content-between pt-md-4 pt-lg-4">
@@ -23,7 +32,7 @@ const Folder = ({folderTitle, cards}) => {
             {folderTitle}
           </h2>
           <div className="folderitems">
-            <button className="templatebtn btn">
+            <button className="templatebtn btn" onClick={onDeleteFolder}>
               {" "}
               <FontAwesomeIcon icon={faTrashAlt} className="mx-md-2" />{" "}
             </button>
@@ -84,13 +93,19 @@ export const RightComponent = () => {
 
 const {folders} = useContext(ProjectContext);
 
+const modalFeatures = useContext(ModalContext);
+
+const openCretaeNewFolderModal = () => {
+  modalFeatures.openModal(modalConstants.CREATE_FOLDER);
+}
+
  
 
 return (
   <div className="col-7 right-container px-5 pt-md-5 pt-lg-5">
     <div className="title d-flex justify-content-between">
       <h2 className="myprojectstitle">My Projects</h2>
-      <button className="btn rightbtn">
+      <button className="btn rightbtn" onClick={openCretaeNewFolderModal}>
         <FontAwesomeIcon icon={faPlus} className="mx-md-2 mx-lg-2" />
         <span>New Folder</span>
       </button>
@@ -103,6 +118,7 @@ return (
                 folderTitle={folder?.title}
                 cards={folder?.files}
                 key={index}
+                id = {folder.id}
               />
             );
         })

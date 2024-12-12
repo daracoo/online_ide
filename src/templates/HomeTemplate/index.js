@@ -7,13 +7,13 @@ import { faPlus, faEdit, faTrashAlt, faFolder, faFolderOpen} from '@fortawesome/
 import {RightComponent} from "./RightComponent/index"
 import { Modal } from '../../Providers/Modals/Modal';
 import { useContext } from 'react';
-import { ModalContext } from '../../Providers/ModalProvider';
+import { modalConstants, ModalContext } from '../../Providers/ModalProvider';
 
 export const HomeTemplate = () => {
   const modalFeatures = useContext(ModalContext)
   const openCreateProjectModal = () => {
     console.log("Open Create Project Modal Triggered");
-      modalFeatures.openModal("CREATE_PROJECT");
+      modalFeatures.openModal(modalConstants.CREATE_PROJECT);
   };
   return (
     <div className="container-fluid h-100 home">

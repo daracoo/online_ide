@@ -84,6 +84,27 @@ export const ProjectProvider = ({ children }) => {
     setFolders(newFolders);
   };
 
+  const createNewFolder = (folderName) => {
+      const newFolder = {
+        id: v4(),
+        title: folderName,
+        files: []
+      }
+
+      const allFolders = [...folders, newFolder];
+      localStorage.setItem('data', JSON.stringify(allFolders));
+      setFolders(allFolders);
+  };
+
+  const deleteFolder = (id) => {
+    const updatedFoldersList = folders.filter((folderItem) => {
+      return folderItem.id !== id;
+    })
+
+    localStorage.setItem('data', JSON.stringify(updatedFoldersList));
+    setFolders(updatedFoldersList);
+  };  
+
   useEffect(() => {
     if(!localStorage.getItem('data'))
     {
@@ -94,6 +115,8 @@ export const ProjectProvider = ({ children }) => {
   const projectFeatures = {
     folders,
     createNewProject,
+    createNewFolder,
+    deleteFolder,
   };
 
   return (
