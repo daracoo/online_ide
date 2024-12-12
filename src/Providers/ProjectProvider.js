@@ -105,6 +105,18 @@ export const ProjectProvider = ({ children }) => {
     setFolders(updatedFoldersList);
   };  
 
+  const editFolderTitle = (newFolderName, id) => {
+    const updatedFoldersList = folders.map((folderItem) => {
+      if(folderItem.id === id)
+      {
+        folderItem.title = newFolderName
+      }
+      return folderItem;
+    })
+    localStorage.setItem('data', JSON.stringify(updatedFoldersList));
+    setFolders(updatedFoldersList);
+  };
+
   useEffect(() => {
     if(!localStorage.getItem('data'))
     {
@@ -117,6 +129,7 @@ export const ProjectProvider = ({ children }) => {
     createNewProject,
     createNewFolder,
     deleteFolder,
+    editFolderTitle,
   };
 
   return (

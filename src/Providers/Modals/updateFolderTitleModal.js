@@ -1,35 +1,31 @@
-import "./createProjectModal.css";
-import { useContext } from 'react';
-import { ModalContext } from '../ModalProvider';
+import { useContext } from "react"
+import "./createProjectModal.css"
+import { ModalContext } from "../ModalProvider"
 import { ProjectContext } from "../ProjectProvider";
 
-export const CreateFolderModal = () => {
+export const UpdateFolderTitleModal = () => {
 
-    const modalFeatures = useContext(ModalContext)
-    const {createNewFolder} = useContext(ProjectContext);
+    const {closeModal, modalPayload} = useContext(ModalContext);
+    const {editFolderTitle} = useContext(ProjectContext)
 
-    const closeModal = () => {
-        modalFeatures.closeModal()
-      };
-
-    const onSubmitModal = (e) =>{
+    const onSubmitModal = (e) => {
         e.preventDefault();
         const folderName = e.target.folderName.value;
-        createNewFolder(folderName);
+        editFolderTitle(folderName, modalPayload);
         closeModal();
     };
 
-  return (
+    return (
     <div className="modal-overlay">
       <form className="modal-content" onSubmit={onSubmitModal}>
         <div className="modal-header ">
-          <h3 className="modal-title">Create new folder</h3>
+          <h3 className="modal-title">Update folder title</h3>
           <button className="close-btn" onClick={closeModal}>X</button>
         </div>
 
         <div className="form-group pt-3">
           <label htmlFor="input1" className="inputtext">
-            Enter the folder name:
+            Enter new folder title:
           </label>
           <input
             type="text"
@@ -42,9 +38,9 @@ export const CreateFolderModal = () => {
         </div>
 
         <button type="submit" className="btn-create">
-          Create
+          Save
         </button>        
       </form>
     </div>
-  );
-};
+    )
+}

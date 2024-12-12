@@ -14,9 +14,15 @@ import { modalConstants, ModalContext } from '../../../Providers/ModalProvider';
 const Folder = ({folderTitle, cards, id}) => {
 
   const {deleteFolder} = useContext(ProjectContext);
+  const {openModal, setModalPayload} = useContext(ModalContext);
 
   const onDeleteFolder = () => {
     deleteFolder(id);
+  };
+
+  const onEditFolderTitle = () => {
+    setModalPayload(id);
+    openModal(modalConstants.UPDATE_FOLDER_TITLE);
   };
 
     return (
@@ -36,7 +42,7 @@ const Folder = ({folderTitle, cards, id}) => {
               {" "}
               <FontAwesomeIcon icon={faTrashAlt} className="mx-md-2" />{" "}
             </button>
-            <button className="templatebtn btn">
+            <button className="templatebtn btn" onClick={onEditFolderTitle}>
               {" "}
               <FontAwesomeIcon icon={faEdit} className="mx-md-2" />{" "}
             </button>
