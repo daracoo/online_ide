@@ -23,7 +23,7 @@ export const CreateFolderModal = () => {
     <div className="modal-overlay">
       <form className="modal-content" onSubmit={onSubmitModal}>
         <div className="modal-header ">
-          <h3 className="modal-title">Create new folder</h3>
+          <h3 className="modal-title">Create New Folder</h3>
           <button className="close-btn" onClick={closeModal}>X</button>
         </div>
 

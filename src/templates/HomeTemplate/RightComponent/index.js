@@ -13,7 +13,7 @@ import { modalConstants, ModalContext } from '../../../Providers/ModalProvider';
 
 const Folder = ({folderTitle, cards, folderId: folderId}) => {
 
-  const {deleteFolder} = useContext(ProjectContext);
+  const {deleteFolder, deleteFile} = useContext(ProjectContext);
   const {openModal, setModalPayload} = useContext(ModalContext);
 
   const onDeleteFolder = () => {
@@ -23,6 +23,11 @@ const Folder = ({folderTitle, cards, folderId: folderId}) => {
   const onEditFolderTitle = () => {
     setModalPayload(folderId);
     openModal(modalConstants.UPDATE_FOLDER_TITLE);
+  };
+
+  const openCreateCardModal = () => {
+    setModalPayload(folderId);
+    openModal(modalConstants.CREATE_CARD)
   };
 
     return (
@@ -46,7 +51,7 @@ const Folder = ({folderTitle, cards, folderId: folderId}) => {
               {" "}
               <FontAwesomeIcon icon={faEdit} className="mx-md-2" />{" "}
             </button>
-            <button className="templatebtn btn">
+            <button className="templatebtn btn" onClick={openCreateCardModal}>
               <FontAwesomeIcon icon={faPlus} />
               <span> New template</span>
             </button>
@@ -59,6 +64,10 @@ const Folder = ({folderTitle, cards, folderId: folderId}) => {
             const onEditFile = () => {
               setModalPayload({fileId: file.id, folderId: folderId})
               openModal(modalConstants.UPDATE_FILE_TITLE)
+            };
+
+            const onDeleteFile = () => {
+              deleteFile(folderId, file.id);
             };
 
             return (
@@ -84,7 +93,7 @@ const Folder = ({folderTitle, cards, folderId: folderId}) => {
 
                     {/* Button Section */}
                     <div className="card-buttons px-2">
-                      <button className="templatebtn btn">
+                      <button className="templatebtn btn" onClick={onDeleteFile}>
                         <FontAwesomeIcon icon={faTrashAlt} />
                       </button>
                       <button className="templatebtn btn" onClick={onEditFile}>

@@ -7,7 +7,8 @@ export const modalConstants = {
     CREATE_PROJECT: 'CREATE_PROJECT',
     CREATE_FOLDER: 'CREATE_FOLDER',
     UPDATE_FOLDER_TITLE: 'UPDATE_FOLDER_TITLE',
-    UPDATE_FILE_TITLE: 'UPDATE_FILE_TITLE'
+    UPDATE_FILE_TITLE: 'UPDATE_FILE_TITLE',
+    CREATE_CARD: 'CREATE_CARD',
 }
 
 export const ModalProvider = ({children}) => {
