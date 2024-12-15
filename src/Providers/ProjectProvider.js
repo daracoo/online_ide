@@ -117,6 +117,28 @@ export const ProjectProvider = ({ children }) => {
     setFolders(updatedFoldersList);
   };
 
+  const editFileTitle = (newFileName, folderId, fileId) => {
+    const copiedFolders = [...folders];
+    for(let i=0; i<copiedFolders.length; i++)
+    {
+      if(folderId === copiedFolders[i].id)
+      {
+        const files = copiedFolders[i].files
+        for(let j=0; j<files.length; j++)
+        {
+          if(files[j].id === fileId)
+          {
+            files[j].title = newFileName;
+            break;
+          }
+        }
+        break;
+      }
+    }
+    localStorage.setItem('data', JSON.stringify(folders));
+    setFolders(folders);
+  }
+
   useEffect(() => {
     if(!localStorage.getItem('data'))
     {
@@ -130,6 +152,7 @@ export const ProjectProvider = ({ children }) => {
     createNewFolder,
     deleteFolder,
     editFolderTitle,
+    editFileTitle,
   };
 
   return (

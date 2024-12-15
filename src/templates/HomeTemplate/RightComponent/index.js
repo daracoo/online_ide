@@ -11,17 +11,17 @@ import { modalConstants, ModalContext } from '../../../Providers/ModalProvider';
 
 
 
-const Folder = ({folderTitle, cards, id}) => {
+const Folder = ({folderTitle, cards, folderId: folderId}) => {
 
   const {deleteFolder} = useContext(ProjectContext);
   const {openModal, setModalPayload} = useContext(ModalContext);
 
   const onDeleteFolder = () => {
-    deleteFolder(id);
+    deleteFolder(folderId);
   };
 
   const onEditFolderTitle = () => {
-    setModalPayload(id);
+    setModalPayload(folderId);
     openModal(modalConstants.UPDATE_FOLDER_TITLE);
   };
 
@@ -54,7 +54,13 @@ const Folder = ({folderTitle, cards, id}) => {
         </div>
         <hr className="hr hr2" />
         <div className="row pb-3">
-          {cards?.map((files, index) => {
+          {cards?.map((file, index) => {
+
+            const onEditFile = () => {
+              setModalPayload({fileId: file.id, folderId: folderId})
+              openModal(modalConstants.UPDATE_FILE_TITLE)
+            };
+
             return (
               <div className="col-sm-12 col-md-12 col-lg-12 col-xxl-6 col-xl-6 pb-3" key={index}>
                 <div className="card shadow-lg border-0 rounded-5 d-flex">
@@ -70,9 +76,9 @@ const Folder = ({folderTitle, cards, id}) => {
 
                     {/* Text Section */}
                     <div className="card-body px-2">
-                      <h5 className="card-title">{files?.title}</h5>
+                      <h5 className="card-title">{file?.title}</h5>
                       <p className="card-text text-muted">
-                        Language: {files?.language}
+                        Language: {file?.language}
                       </p>
                     </div>
 
@@ -81,7 +87,7 @@ const Folder = ({folderTitle, cards, id}) => {
                       <button className="templatebtn btn">
                         <FontAwesomeIcon icon={faTrashAlt} />
                       </button>
-                      <button className="templatebtn btn">
+                      <button className="templatebtn btn" onClick={onEditFile}>
                         <FontAwesomeIcon icon={faEdit} />
                       </button>
                     </div>
@@ -124,7 +130,7 @@ return (
                 folderTitle={folder?.title}
                 cards={folder?.files}
                 key={index}
-                id = {folder.id}
+                folderId = {folder.id}
               />
             );
         })
