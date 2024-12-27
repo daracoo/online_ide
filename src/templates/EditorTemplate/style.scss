@@ -2,8 +2,15 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
+    .icon-container{
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 4px;
+        cursor: pointer;
+    }
     .content-container{
-        padding: 20px;
+        padding: 10px;
         border: 2px solid orange;
         flex-grow: 1;
         display: grid;
@@ -19,8 +26,29 @@
         background-color: #1e1e1e;
         padding: 2px 0;
     }
-    .input-container, .output-container{
-        border: 2px solid red;
+    .input-output-container{
+        display: flex;
+        flex-direction: column;
+        .input-header{
+            background-color: gainsboro;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        textarea{
+            flex-grow: 1;
+            border: none;
+            resize: none;
+            padding: 10px;
+            font-size: 20px;
+        }
+        textarea:focus{
+            outline: none;
+        }
+        button{
+            border: none;
+            background-color: gainsboro;
+        }
     }
     .editor-container{
         border: 2px solid black;
