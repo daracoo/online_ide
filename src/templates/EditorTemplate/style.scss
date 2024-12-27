@@ -10,10 +10,11 @@
         cursor: pointer;
     }
     .content-container{
-        padding: 10px;
-        border: 2px solid orange;
+        padding: 5px;
         flex-grow: 1;
         display: grid;
+        gap: 20px;
+        background-color: #1a1a1a;
         grid-template-columns: 3fr 2fr;
     }
     .logo{
@@ -51,7 +52,6 @@
         }
     }
     .editor-container{
-        border: 2px solid black;
         grid-row: 1/ 3
     }
 }
