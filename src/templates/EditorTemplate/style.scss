@@ -1,0 +1,29 @@
+.page-container{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    .content-container{
+        padding: 20px;
+        border: 2px solid orange;
+        flex-grow: 1;
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+    }
+    .logo{
+        height: 100px;
+        border-radius: 50%;
+    }
+    .header-container{
+        display: flex;
+        justify-content: center;
+        background-color: #1e1e1e;
+        padding: 2px 0;
+    }
+    .input-container, .output-container{
+        border: 2px solid red;
+    }
+    .editor-container{
+        border: 2px solid black;
+        grid-row: 1/ 3
+    }
+}

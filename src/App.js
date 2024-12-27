@@ -12,7 +12,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomeTemplate />} />
-            <Route path="/editor" element={<EditorTemplate />} />
+            <Route path="/editor/:fileId/:folderId" element={<EditorTemplate />} />
           </Routes>
         </BrowserRouter>
       </ModalProvider>

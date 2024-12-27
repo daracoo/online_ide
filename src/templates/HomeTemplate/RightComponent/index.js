@@ -8,6 +8,7 @@ import { useContext } from 'react';
 import { ProjectContext } from '../../../Providers/ProjectProvider';
 import { Modal } from 'bootstrap';
 import { modalConstants, ModalContext } from '../../../Providers/ModalProvider';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -15,6 +16,7 @@ const Folder = ({folderTitle, cards, folderId: folderId}) => {
 
   const {deleteFolder, deleteFile} = useContext(ProjectContext);
   const {openModal, setModalPayload} = useContext(ModalContext);
+  const navigate = useNavigate();
 
   const onDeleteFolder = () => {
     deleteFolder(folderId);
@@ -70,8 +72,14 @@ const Folder = ({folderTitle, cards, folderId: folderId}) => {
               deleteFile(folderId, file.id);
             };
 
+            const navigateToEditor = () => {
+              navigate("/editor/${file.id}/${folderId}")
+            }
+
             return (
-              <div className="col-sm-12 col-md-12 col-lg-12 col-xxl-6 col-xl-6 pb-3" key={index}>
+              <div className="col-sm-12 col-md-12 col-lg-12 col-xxl-6 col-xl-6 pb-3" 
+              key={index} onClick={navigateToEditor}
+              style={{cursor: 'pointer'}}>
                 <div className="card shadow-lg border-0 rounded-5 d-flex">
                   <div className="d-flex align-items-center w-100">
                     {/* Logo Section */}
@@ -93,10 +101,10 @@ const Folder = ({folderTitle, cards, folderId: folderId}) => {
 
                     {/* Button Section */}
                     <div className="card-buttons px-2">
-                      <button className="templatebtn btn" onClick={onDeleteFile}>
+                      <button className="templatebtn btn icon-btn" onClick={onDeleteFile}>
                         <FontAwesomeIcon icon={faTrashAlt} />
                       </button>
-                      <button className="templatebtn btn" onClick={onEditFile}>
+                      <button className="templatebtn btn icon-btn" onClick={onEditFile}>
                         <FontAwesomeIcon icon={faEdit} />
                       </button>
                     </div>
