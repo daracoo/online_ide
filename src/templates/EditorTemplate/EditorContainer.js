@@ -1,6 +1,12 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faUpRightAndDownLeftFromCenter, faFileImport, faDownload, faPlay } from '@fortawesome/free-solid-svg-icons';
 import './EditorContainer.scss'
+import { Editor } from '@monaco-editor/react';
+
+const editorOptions = {
+    fontSize: 18,
+    wordWrap: 'on'
+}
 
 export const EditorContainer = () => {
     return(
@@ -25,7 +31,10 @@ export const EditorContainer = () => {
                 </div>
             </div>
             <div className='editor-body'>
-                Body
+                <Editor height={"100%"}
+                language={"javascript"}
+                options={editorOptions}
+                theme={'vs-dark'}/>
             </div>
             <div className='editor-footer'>
                 <button className='btn'>
