@@ -23,14 +23,14 @@ const fileExtensionMapping = {
     java: 'java',
 }
 
-export const EditorContainer = ({fileId,folderId}) => {
-    const {getDefaultCode} = useContext(ProjectContext);
+export const EditorContainer = ({fileId, folderId}) => {
+    const {getDefaultCode, getLanguage, updateLanguage} = useContext(ProjectContext);
     const [code, setCode] = useState(() => {
-        return getDefaultCode(fileId,folderId);
+        return getDefaultCode(fileId, folderId);
     });
-    const [language, setLanguage] = useState("cpp");
+    const [language, setLanguage] = useState(() => getLanguage(fileId, folderId));
     const [theme, setTheme] = useState('vs-dark');
-    const codeRef = useRef()
+    const codeRef = useRef(code)
 
 
     const onChangeCode = (newCode) => {
@@ -59,24 +59,25 @@ export const EditorContainer = ({fileId,folderId}) => {
         if (!codeValue) {
             alert("Please type some code in the editor before exporting!")
         }
-            // креирам blob за инстант file во меморија
-            const codeBlob = new Blob([codeValue], {type: "text/plain"})
+        // креирам blob за инстант file во меморија
+        const codeBlob = new Blob([codeValue], {type: "text/plain"})
 
-            // линк за симнување со blob дата
-            const downloadUrl = URL.createObjectURL(codeBlob)
+        // линк за симнување со blob дата
+        const downloadUrl = URL.createObjectURL(codeBlob)
 
-            // креирам линк за симнување на фајлот :DDDD
-            const link = document.createElement("a");
-            link.href = downloadUrl;
-            // const fileExtension =
-            link.download = `code.${fileExtensionMapping[language]}`
-            link.click()
-
+        // креирам линк за симнување на фајлот :DDDD
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        // const fileExtension =
+        link.download = `code.${fileExtensionMapping[language]}`
+        link.click()
 
 
     }
 
     const onChangeLanguage = (e) => {
+        updateLanguage(fileId,folderId,e.target.value)
+        setCode(getDefaultCode(fileId,folderId))
         setLanguage(e.target.value)
     }
 

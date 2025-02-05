@@ -164,7 +164,6 @@ export const ProjectProvider = ({children}) => {
 
 
     const getDefaultCode = (fileId, folderId) => {
-        console.log(folders)
         for (let i = 0; i < folders.length; i++) {
             if (folders[i].id === folderId) {
                 for (let j = 0; j < folders[i].files.length; j++) {
@@ -176,8 +175,41 @@ export const ProjectProvider = ({children}) => {
                 }
             }
         }
-        return "// No code found. Defaulting..."
+        return "//Error"
     }
+
+    const getLanguage = (fileId, folderId) => {
+        for (let i = 0; i < folders.length; i++) {
+            if (folders[i].id === folderId) {
+                for (let j = 0; j < folders[i].files.length; j++) {
+                    const currentFile = folders[i].files[j];
+                    if (fileId === currentFile.id) {
+                        return currentFile.language;
+                        // console.log(currentFile.code)
+                    }
+                }
+            }
+        }
+        return "//Error"
+    }
+
+    const updateLanguage = (fileId, folderId, language) => {
+        const newFolders = [...folders]
+        for (let i = 0; i < newFolders.length; i++) {
+            if (newFolders[i].id === folderId) {
+                for (let j = 0; j < newFolders[i].files.length; j++) {
+                    const currentFile = newFolders[i].files[j];
+                    if (fileId === currentFile.id) {
+                        newFolders[i].files[j].code = defaultCodes[language]
+                        newFolders[i].files[j].language = language
+                    }
+                }
+            }
+        }
+        localStorage.setItem("data", JSON.stringify(newFolders));
+        setFolders(newFolders)
+    }
+
 
     useEffect(() => {
         if (!localStorage.getItem('data')) {
@@ -194,7 +226,9 @@ export const ProjectProvider = ({children}) => {
         editFileTitle,
         deleteFile,
         createProject,
-        getDefaultCode
+        getDefaultCode,
+        getLanguage,
+        updateLanguage
     };
 
     return (
