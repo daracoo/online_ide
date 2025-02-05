@@ -73,7 +73,7 @@ const Folder = ({folderTitle, cards, folderId: folderId}) => {
             };
 
             const navigateToEditor = () => {
-              navigate("/editor/${file.id}/${folderId}")
+              navigate(`/editor/${file.id}/${folderId}`)
             }
 
             return (

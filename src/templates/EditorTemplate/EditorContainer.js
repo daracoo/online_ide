@@ -8,7 +8,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import './EditorContainer.scss'
 import {Editor} from '@monaco-editor/react';
-import {useRef, useState} from "react";
+import {useContext, useRef, useState} from "react";
+import {ProjectContext} from "../../Providers/ProjectProvider";
 
 const editorOptions = {
     fontSize: 18,
@@ -22,8 +23,11 @@ const fileExtensionMapping = {
     java: 'java',
 }
 
-export const EditorContainer = () => {
-    const [code, setCode] = useState();
+export const EditorContainer = ({fileId,folderId}) => {
+    const {getDefaultCode} = useContext(ProjectContext);
+    const [code, setCode] = useState(() => {
+        return getDefaultCode(fileId,folderId);
+    });
     const [language, setLanguage] = useState("cpp");
     const [theme, setTheme] = useState('vs-dark');
     const codeRef = useRef()

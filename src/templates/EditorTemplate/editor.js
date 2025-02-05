@@ -7,10 +7,8 @@ import {useState} from "react";
 
 export const EditorTemplate = () => {
     const params = useParams();
-    console.log(params);
-
-
-    
+    const {fileId, folderId} = params;
+    console.log('Route params:', { fileId, folderId });
     const [input, setInput] = useState('')
     const [output, setOutput] = useState('')
 
@@ -51,7 +49,7 @@ export const EditorTemplate = () => {
             </div>
             <div className="content-container">
                 <div className="editor-container">
-                    <EditorContainer fileId={fileId}/>
+                    <EditorContainer fileId={fileId} folderId={folderId}/>
                 </div>
                 <div className="input-output-container">
                     <div className="input-header">

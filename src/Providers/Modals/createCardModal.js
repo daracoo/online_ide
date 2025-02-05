@@ -10,7 +10,7 @@ export const CreateCardModal = () => {
 
     const {closeModal, modalPayload} = useContext(ModalContext); 
 
-    const {createPlayground} = useContext(ProjectContext);
+    const {createProject} = useContext(ProjectContext);
     
     const onSubmitModal = (e) => {
         e.preventDefault();
@@ -24,7 +24,7 @@ export const CreateCardModal = () => {
             code: defaultCodes[language]
         }
 
-        createPlayground(modalPayload, file);
+        createProject(modalPayload, file);
         closeModal();
     };
 
@@ -32,7 +32,7 @@ export const CreateCardModal = () => {
     <div className="modal-overlay">
       <form className="modal-content" onSubmit={onSubmitModal}>
         <div className="modal-header ">
-          <h3 className="modal-title">Create New Playground</h3>
+          <h3 className="modal-title">Create New Project</h3>
           <button className="close-btn" onClick={closeModal}>
             X
           </button>
@@ -47,7 +47,7 @@ export const CreateCardModal = () => {
             name="fileName"
             className="form-control"
             id="input2"
-            placeholder="Playground name"
+            placeholder="Project name"
             required
           />
         </div>
@@ -57,7 +57,7 @@ export const CreateCardModal = () => {
             <option value="cpp">CPP</option>
             <option value="java">Java</option>
             <option value="javascript">Java Script</option>
-            <option value="Python">Python</option>
+            <option value="python">Python</option>
           </select>
           <button type="submit" className="btn-create">
             Create

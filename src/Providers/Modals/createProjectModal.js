@@ -55,7 +55,7 @@ export const CreateProjectModal = () => {
         <option value="cpp">CPP</option>
         <option value="java">Java</option>
         <option value="javascript">Java Script</option>
-        <option value="Python">Python</option>
+        <option value="python">Python</option>
       </select>
       <button type="submit" className="btn-create">Create</button>
     </div>
