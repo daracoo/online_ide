@@ -3,10 +3,9 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./indexstyle.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faEdit, faTrashAlt, faFolder, faFolderOpen} from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faEdit, faTrashAlt, faFolderOpen} from '@fortawesome/free-solid-svg-icons';
 import { useContext } from 'react';
 import { ProjectContext } from '../../../Providers/ProjectProvider';
-import { Modal } from 'bootstrap';
 import { modalConstants, ModalContext } from '../../../Providers/ModalProvider';
 import { useNavigate } from 'react-router-dom';
 
@@ -101,10 +100,10 @@ const Folder = ({folderTitle, cards, folderId: folderId}) => {
 
                     {/* Button Section */}
                     <div className="card-buttons px-2">
-                      <button className="templatebtn btn icon-btn" onClick={onDeleteFile}>
+                      <button className="templatebtn btn icon-btn" onClick={(e) => { e.stopPropagation(); onDeleteFile(); }}>
                         <FontAwesomeIcon icon={faTrashAlt} />
                       </button>
-                      <button className="templatebtn btn icon-btn" onClick={onEditFile}>
+                      <button className="templatebtn btn icon-btn" onClick={(e) => { e.stopPropagation(); onEditFile(); }}>
                         <FontAwesomeIcon icon={faEdit} />
                       </button>
                     </div>
