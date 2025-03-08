@@ -3,7 +3,8 @@ import "./style.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileImport, faDownload} from '@fortawesome/free-solid-svg-icons';
 import {EditorContainer} from "./EditorContainer";
-import {useState} from "react";
+import {useCallback, useState} from "react";
+import { makeSubmission } from "./service";
 
 export const EditorTemplate = () => {
     const params = useParams();
@@ -11,6 +12,7 @@ export const EditorTemplate = () => {
     console.log('Route params:', { fileId, folderId });
     const [input, setInput] = useState('')
     const [output, setOutput] = useState('')
+    const [showLoader, setShowLoader] = useState(false);
 
     const importInput = (e) => {
         const file = e.target.files[0]
@@ -41,6 +43,33 @@ export const EditorTemplate = () => {
         }
     }
 
+    const callback = ({apiStatus, data, message}) =>{
+        if(apiStatus === 'loading')
+        {
+            setShowLoader(true);
+        }
+        else if(apiStatus === 'error')
+        {
+            setOutput("Something went wrong")
+        }
+        else
+        {
+            if(data.status.id === 3)
+            {
+                setOutput(atob(data.stdout))
+            }
+            else
+            {
+                setOutput(atob(data.stderr))
+            }
+            
+        }
+    }
+
+    const runCode = useCallback((code, language) => {
+        makeSubmission({code, language, input, callback})
+    }, [input])
+
 
     return (
         <div className="page-container">
@@ -49,7 +78,7 @@ export const EditorTemplate = () => {
             </div>
             <div className="content-container">
                 <div className="editor-container">
-                    <EditorContainer fileId={fileId} folderId={folderId}/>
+                    <EditorContainer fileId={fileId} folderId={folderId} runCode={runCode}/>
                 </div>
                 <div className="input-output-container">
                     <div className="input-header">
@@ -73,6 +102,12 @@ export const EditorTemplate = () => {
                     <textarea readOnly value={output} onChange={(e) => setOutput(e.target.value)}></textarea>
                 </div>
             </div>
+
+            {showLoader && <div className="fullpage-loader">
+                <div className="loader">
+
+                </div>
+            </div>}
         </div>
     )
 }

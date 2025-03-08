@@ -10,6 +10,7 @@ import './EditorContainer.scss'
 import { Editor } from '@monaco-editor/react';
 import { useContext, useRef, useState, useEffect } from "react";
 import { ProjectContext } from "../../Providers/ProjectProvider";
+import { makeSubmission } from './service';
 
 const editorOptions = {
     fontSize: 18,
@@ -24,7 +25,7 @@ const fileExtensionMapping = {
     java: 'java',
 }
 
-export const EditorContainer = ({ fileId, folderId }) => {
+export const EditorContainer = ({ fileId, folderId, runCode }) => {
     const { getDefaultCode, getLanguage, updateLanguage, saveCode } = useContext(ProjectContext);
     const [code, setCode] = useState(() => {
         return getDefaultCode(fileId, folderId);
@@ -37,6 +38,7 @@ export const EditorContainer = ({ fileId, folderId }) => {
     const containerRef = useRef(null);
     const originalDimensionsRef = useRef(null);
     const resizeTimeoutRef = useRef(null);
+
 
     useEffect(() => {
         const handleResize = () => {
@@ -167,6 +169,10 @@ export const EditorContainer = ({ fileId, folderId }) => {
         }
     }
 
+    const onRunCode = () =>{
+        runCode({code: codeRef.current, language})
+    }
+
     useEffect(() => {
         return () => {
             document.removeEventListener('keydown', handleEscKey);
@@ -219,12 +225,11 @@ export const EditorContainer = ({ fileId, folderId }) => {
                     <span><FontAwesomeIcon icon={faDownload} /></span>
                     <span>Export Code</span>
                 </button>
-                <button className='btn'>
+                <button className='btn' onClick={onRunCode}>
                     <span><FontAwesomeIcon icon={faPlay} /></span>
                     <span>Run Code</span>
                 </button>
             </div>
-
         </div>
     );
 }

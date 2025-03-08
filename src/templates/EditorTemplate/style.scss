@@ -54,4 +54,34 @@
     .editor-container{
         grid-row: 1/ 3
     }
+    .fullpage-loader{
+        border: 2px solid red;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.164);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .loader{
+          width: 100px;
+          height: 100px;
+          background-color: transparent;
+          border: 8px solid #F28C28;
+          border-left-color: #F4BB44;
+          animation: 0.8s loader infinite ease-in-out;
+          border-radius: 50%;
+        }
+      }
+}
+
+@keyframes loader{
+    from{
+      transform: rotate(0deg);
+    }
+    to{
+      transform: rotate(360deg);
+    }
 }
