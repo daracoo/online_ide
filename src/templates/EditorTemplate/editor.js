@@ -13,6 +13,7 @@ export const EditorTemplate = () => {
     const [input, setInput] = useState('')
     const [output, setOutput] = useState('')
     const [showLoader, setShowLoader] = useState(false);
+    const [isError, setIsError] = useState(false);
 
     const importInput = (e) => {
         const file = e.target.files[0]
@@ -22,7 +23,6 @@ export const EditorTemplate = () => {
             fileReader.readAsText(file)
             fileReader.onload = (e) => {
                 setInput(e.target.result)
-
             }
         } else {
             alert("Please choose a program file!");
@@ -40,41 +40,44 @@ export const EditorTemplate = () => {
             link.href = url;
             link.download = "output.txt";
             link.click()
+            URL.revokeObjectURL(url);
         }
     }
 
-    const callback = ({apiStatus, data, message}) =>{
-        if(apiStatus === 'loading')
-        {
+    const callback = useCallback(({apiStatus, data, message}) => {
+        if(apiStatus === 'loading') {
             setShowLoader(true);
         }
-        else if(apiStatus === 'error')
-        {
-            setOutput("Something went wrong")
+        else if(apiStatus === 'error') {
+            setShowLoader(false);
+            setOutput("Something went wrong: " + message);
+            setIsError(true);
         }
-        else
-        {
-            if(data.status.id === 3)
-            {
-                setOutput(atob(data.stdout))
+        else {
+            setShowLoader(false);
+            if(data.status.id === 3) {
+                setOutput(atob(data.stdout || ''));
+                setIsError(false);
+            } else {
+                setOutput(atob(data.stderr || ''));
+                setIsError(true);
             }
-            else
-            {
-                setOutput(atob(data.stderr))
-            }
-            
         }
-    }
+    }, []);
 
-    const runCode = useCallback((code, language) => {
-        makeSubmission({code, language, input, callback})
-    }, [input])
-
+    const runCode = useCallback(({code, language}) => {
+        makeSubmission({
+            code,
+            language,
+            stdin: input,
+            callback
+        });
+    }, [input, callback]);
 
     return (
         <div className="page-container">
             <div className="header-container">
-                <img src="https://i.ibb.co/P4763KY/Code-Editor-3.png" className="logo" alt="logo"></img>
+                <img src="https://i.ibb.co/P4763KY/Code-Editor-3.png" className="logo" alt="logo" />
             </div>
             <div className="content-container">
                 <div className="editor-container">
@@ -85,11 +88,14 @@ export const EditorTemplate = () => {
                         <b>Input: </b>
                         <label htmlFor="input" className="icon-container">
                             <span><FontAwesomeIcon icon={faFileImport}/></span>
-                            <b className="">Import Input</b>
+                            <b>Import Input</b>
                         </label>
-                        <input type="file" id="input" style={{display: 'none'}} onChange={importInput}></input>
+                        <input type="file" id="input" style={{display: 'none'}} onChange={importInput} />
                     </div>
-                    <textarea value={input} onChange={ (e) => setInput(e.target.value)}> </textarea>
+                    <textarea
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                    />
                 </div>
                 <div className="input-output-container">
                     <div className="input-header">
@@ -99,15 +105,19 @@ export const EditorTemplate = () => {
                             <b>Export Output</b>
                         </button>
                     </div>
-                    <textarea readOnly value={output} onChange={(e) => setOutput(e.target.value)}></textarea>
+                    <textarea
+                        readOnly
+                        value={output}
+                        style={{ color: isError ? '#ff0000' : '#000000' }}
+                    />
                 </div>
             </div>
 
-            {showLoader && <div className="fullpage-loader">
-                <div className="loader">
-
+            {showLoader && (
+                <div className="fullpage-loader">
+                    <div className="loader" />
                 </div>
-            </div>}
+            )}
         </div>
-    )
+    );
 }

@@ -10,12 +10,11 @@ import './EditorContainer.scss'
 import { Editor } from '@monaco-editor/react';
 import { useContext, useRef, useState, useEffect } from "react";
 import { ProjectContext } from "../../Providers/ProjectProvider";
-import { makeSubmission } from './service';
 
 const editorOptions = {
     fontSize: 18,
     wordWrap: 'on',
-    automaticLayout: true // Enable automatic layout adjustments
+    automaticLayout: true
 }
 
 const fileExtensionMapping = {
@@ -27,18 +26,21 @@ const fileExtensionMapping = {
 
 export const EditorContainer = ({ fileId, folderId, runCode }) => {
     const { getDefaultCode, getLanguage, updateLanguage, saveCode } = useContext(ProjectContext);
-    const [code, setCode] = useState(() => {
-        return getDefaultCode(fileId, folderId);
-    });
     const [language, setLanguage] = useState(() => getLanguage(fileId, folderId));
+    const [code, setCode] = useState(() => getDefaultCode(fileId, folderId));
     const [theme, setTheme] = useState('vs-dark');
-    const codeRef = useRef(code)
-    const [isFullScreen, setIsFullScreen] = useState(false)
+    const codeRef = useRef(code);
+    const [isFullScreen, setIsFullScreen] = useState(false);
     const editorRef = useRef(null);
     const containerRef = useRef(null);
     const originalDimensionsRef = useRef(null);
     const resizeTimeoutRef = useRef(null);
 
+    useEffect(() => {
+        const currentCode = getDefaultCode(fileId, folderId);
+        setCode(currentCode);
+        codeRef.current = currentCode;
+    }, [language, fileId, folderId, getDefaultCode]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -75,18 +77,25 @@ export const EditorContainer = ({ fileId, folderId, runCode }) => {
     }, [isFullScreen]);
 
     const onChangeCode = (newCode) => {
+        setCode(newCode);
         codeRef.current = newCode;
     }
 
     const importCode = (event) => {
         const file = event.target.files[0];
+        const validExtensions = ['cpp', 'js', 'py', 'java'];
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        if (!validExtensions.includes(fileExtension)) {
+            alert("Please choose a valid program file!");
+            return;
+        }
         const fileType = file.type.includes("text");
         if (fileType) {
             const fileReader = new FileReader();
             fileReader.readAsText(file)
             fileReader.onload = function (value) {
                 const importedCode = value.target.result;
-                setCode(importedCode)
+                setCode(importedCode);
                 codeRef.current = importedCode;
             }
         } else {
@@ -97,8 +106,9 @@ export const EditorContainer = ({ fileId, folderId, runCode }) => {
     const exportCode = () => {
         const codeValue = codeRef.current?.trim();
 
-        if (!codeValue) {
-            alert("Please type some code in the editor before exporting!")
+        if (!codeRef.current || !codeRef.current.trim()) {
+            alert("Please type some code in the editor before exporting!");
+            return;
         }
         const codeBlob = new Blob([codeValue], { type: "text/plain" })
         const downloadUrl = URL.createObjectURL(codeBlob)
@@ -110,18 +120,18 @@ export const EditorContainer = ({ fileId, folderId, runCode }) => {
     }
 
     const onChangeLanguage = (e) => {
-        updateLanguage(fileId, folderId, e.target.value)
-        setCode(getDefaultCode(fileId, folderId))
-        setLanguage(e.target.value)
-    }
+        const newLanguage = e.target.value;
+        setLanguage(newLanguage);
+        updateLanguage(fileId, folderId, newLanguage);
+    };
 
     const onChangeTheme = (e) => {
         setTheme(e.target.value);
     }
 
     const onSaveCode = () => {
-        saveCode(fileId, folderId, codeRef.current)
-        alert("Code Saved Successfully!!")
+        saveCode(fileId, folderId, codeRef.current);
+        alert("Code Saved Successfully!!");
     }
 
     const handleEditorDidMount = (editor) => {
@@ -151,7 +161,6 @@ export const EditorContainer = ({ fileId, folderId, runCode }) => {
                     if (editorBody) {
                         editorBody.style.height = `${originalDimensions.editorHeight}px`;
                     }
-                    //container.offsetHeight;
                     requestAnimationFrame(() => {
                         if (editorRef.current) {
                             editorRef.current.layout();
@@ -169,8 +178,8 @@ export const EditorContainer = ({ fileId, folderId, runCode }) => {
         }
     }
 
-    const onRunCode = () =>{
-        runCode({code: codeRef.current, language})
+    const onRunCode = () => {
+        runCode({ code: codeRef.current, language });
     }
 
     useEffect(() => {
