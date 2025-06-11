@@ -6,6 +6,8 @@ import {EditorContainer} from "./EditorContainer";
 import {useCallback, useState} from "react";
 import { makeSubmission } from "./service";
 import { v4 as uuidv4 } from 'uuid';
+import { getDatabase, ref, set } from 'firebase/database';
+import app from '../../firebase';
 
 
 export const EditorTemplate = () => {
@@ -13,6 +15,8 @@ export const EditorTemplate = () => {
     const {fileId, folderId} = params;
     const navigate = useNavigate();
     console.log('Route params:', { fileId, folderId });
+
+    const database = getDatabase(app);
 
     const queryParams = new URLSearchParams(window.location.search);
     const sessionId = queryParams.get('sessionId');
@@ -82,14 +86,25 @@ export const EditorTemplate = () => {
         });
     }, [input, callback]);
 
-    const startNewCollaborationSession = () => {
+    const startNewCollaborationSession = (initialCodeContent) => {
         const newSessionId = uuidv4();
         console.log("Generated new session ID:", newSessionId);
 
-        const currentPath = `/editor/${folderId}/${fileId}`;
-        navigate(`${currentPath}?sessionId=${newSessionId}`, { replace: true });
+        const newSessionCodeRef = ref(database, `sessions/${newSessionId}/code`);
 
-        alert(`New collaboration session started! Share this URL: ${window.location.origin}${currentPath}?sessionId=${newSessionId}`);
+        set(newSessionCodeRef, initialCodeContent)
+            .then(() => {
+                console.log("Initial code written to Firebase for new session:", newSessionId);
+
+                const currentPath = `/editor/${folderId}/${fileId}`;
+                navigate(`${currentPath}?sessionId=${newSessionId}`, { replace: true });
+
+                alert(`New collaboration session started! Share this URL: ${window.location.origin}${currentPath}?sessionId=${newSessionId}`);
+            })
+            .catch((error) => {
+                console.error("Failed to write initial code to Firebase:", error);
+                alert("Failed to start new collaboration session. Please try again.");
+            });
     };
 
     return (

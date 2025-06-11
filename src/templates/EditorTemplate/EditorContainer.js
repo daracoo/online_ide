@@ -237,7 +237,7 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
                     <b className='title'>{"Title"}</b>
                     <span><FontAwesomeIcon icon={faEdit} /></span>
                     <button onClick={onSaveCode}>Save Code</button>
-                    <button onClick={onStartNewCollaboration}>Start New Collaboration</button>
+                    <button onClick={() => onStartNewCollaboration(codeRef.current)}>Start New Collaboration</button>
                 </div>
                 <div className='editor-right-container'>
                     <select onChange={onChangeLanguage} value={language}>
