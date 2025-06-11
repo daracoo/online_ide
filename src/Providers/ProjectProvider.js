@@ -170,12 +170,25 @@ export const ProjectProvider = ({children}) => {
                     const currentFile = folders[i].files[j];
                     if (fileId === currentFile.id) {
                         return currentFile.code;
-                        // console.log(currentFile.code)
                     }
                 }
             }
         }
         return "//Error"
+    }
+
+        const getFileName = (fileId, folderId) => {
+        for (let i = 0; i < folders.length; i++) {
+            if (folders[i].id === folderId) {
+                for (let j = 0; j < folders[i].files.length; j++) {
+                    const currentFile = folders[i].files[j];
+                    if (fileId === currentFile.id) {
+                        return currentFile.title;
+                    }
+                }
+            }
+        }
+        return "Untitled";
     }
 
     const getLanguage = (fileId, folderId) => {
@@ -185,7 +198,6 @@ export const ProjectProvider = ({children}) => {
                     const currentFile = folders[i].files[j];
                     if (fileId === currentFile.id) {
                         return currentFile.language;
-                        // console.log(currentFile.code)
                     }
                 }
             }
@@ -246,7 +258,8 @@ export const ProjectProvider = ({children}) => {
         getDefaultCode,
         getLanguage,
         updateLanguage,
-        saveCode
+        saveCode,
+        getFileName
     };
 
     return (

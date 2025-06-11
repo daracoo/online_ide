@@ -28,13 +28,16 @@ const fileExtensionMapping = {
 }
 
 export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartNewCollaboration }) => {
-    const { getDefaultCode, getLanguage, updateLanguage, saveCode } = useContext(ProjectContext);
+    const { getDefaultCode, getLanguage, updateLanguage, saveCode, getFileName, editFileTitle } = useContext(ProjectContext);
     const [language, setLanguage] = useState(() => getLanguage(fileId, folderId));
     const [code, setCode] = useState(() => getDefaultCode(fileId, folderId));
+    const templateName = getFileName(fileId, folderId);
     const [theme, setTheme] = useState('vs-dark');
     const codeRef = useRef(code);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const editorRef = useRef(null);
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [newTitleText, setNewTitleText] = useState('');
     const containerRef = useRef(null);
     const originalDimensionsRef = useRef(null);
     const resizeTimeoutRef = useRef(null);
@@ -255,12 +258,58 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
         onStartNewCollaboration(codeRef.current, language);
     };
 
+    const handleEditClick = () => {
+        setNewTitleText(templateName);
+        setIsEditingTitle(true);
+    };
+
+    const handleTitleInputChange = (e) => {
+        setNewTitleText(e.target.value);
+    };
+
+    const saveTitle = () => {
+        if (newTitleText.trim() && fileId && folderId) {
+            editFileTitle(newTitleText.trim(), folderId, fileId);
+            setIsEditingTitle(false);
+        } else {
+             alert("Title cannot be empty!");
+             setIsEditingTitle(false);
+        }
+    };
+
+    const handleTitleInputKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            saveTitle();
+        }
+    };
+
+    const handleTitleInputBlur = () => {
+       saveTitle();
+    };
+
     return (
         <div ref={containerRef} className={`root-editor-container ${isFullScreen ? 'fullscreen' : ''}`}>
             <div className='editor-header'>
                 <div className='editor-left-container'>
-                    <b className='title'>{"Title"}</b>
-                    <span><FontAwesomeIcon icon={faEdit} /></span>
+                    {isEditingTitle ? (
+                        <input
+                            type="text"
+                            value={newTitleText}
+                            onChange={handleTitleInputChange}
+                            onKeyDown={handleTitleInputKeyPress}
+                            onBlur={handleTitleInputBlur}
+                            autoFocus
+                            className="title-input"
+                        />
+                    ) : (
+                        <>
+                            <b className='title'>{templateName}</b>
+                            <span onClick={handleEditClick} style={{ cursor: 'pointer', marginLeft: '5px' }}>
+                                <FontAwesomeIcon icon={faEdit} />
+                            </span>
+                        </>
+                    )}
+
                     <button onClick={onSaveCode}>Save Code</button>
                     <button onClick={onStartNewCollaborationClick}>Start New Collaboration</button>
                 </div>
