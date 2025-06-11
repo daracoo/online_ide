@@ -66,9 +66,10 @@ export const ProjectProvider = ({children}) => {
         return initialData;
     });
 
-    const createNewProject = (newProject) => {
+    const createNewProject = (newProject, initialCode) => {
         const {folderName, templateName, language} = newProject;
         const newFolders = [...folders];
+
         newFolders.push({
             id: v4(),
             title: folderName,
@@ -76,7 +77,7 @@ export const ProjectProvider = ({children}) => {
                 {
                     id: v4(),
                     title: templateName,
-                    code: defaultCodes[language],
+                    code: initialCode !== undefined ? initialCode : defaultCodes[language],
                     language: language,
                 },
             ],
@@ -244,7 +245,7 @@ export const ProjectProvider = ({children}) => {
         if (!localStorage.getItem('data')) {
             localStorage.setItem("data", JSON.stringify(folders));
         }
-    }, []);
+    }, [folders]);
 
     const projectFeatures = {
         folders,

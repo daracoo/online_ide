@@ -3,10 +3,11 @@ import "./style.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileImport, faDownload} from '@fortawesome/free-solid-svg-icons';
 import {EditorContainer} from "./EditorContainer";
-import {useCallback, useState} from "react";
+import {useCallback, useState, useContext} from "react";
 import { makeSubmission } from "./service";
 import { v4 as uuidv4 } from 'uuid';
 import { getDatabase, ref, set } from 'firebase/database';
+import { ProjectContext } from "../../Providers/ProjectProvider";
 import app from '../../firebase';
 
 
@@ -26,6 +27,8 @@ export const EditorTemplate = () => {
     const [output, setOutput] = useState('')
     const [showLoader, setShowLoader] = useState(false);
     const [isError, setIsError] = useState(false);
+
+    const { createNewProject } = useContext(ProjectContext);
 
     const importInput = (e) => {
         const file = e.target.files[0]
@@ -123,6 +126,8 @@ export const EditorTemplate = () => {
                         runCode={runCode}
                         sessionId={sessionId}
                         onStartNewCollaboration={startNewCollaborationSession}
+                        createNewProject={createNewProject}
+                        navigate = { navigate }
                     />
                 </div>
                 <div className="input-output-container">

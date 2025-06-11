@@ -17,7 +17,8 @@ import app from '../../firebase';
 const editorOptions = {
     fontSize: 18,
     wordWrap: 'on',
-    automaticLayout: true
+    automaticLayout: true,
+    minimap: { enabled: false }
 }
 
 const fileExtensionMapping = {
@@ -27,7 +28,7 @@ const fileExtensionMapping = {
     java: 'java',
 }
 
-export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartNewCollaboration }) => {
+export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartNewCollaboration, createNewProject }) => {
     const { getDefaultCode, getLanguage, updateLanguage, saveCode, getFileName, editFileTitle } = useContext(ProjectContext);
     const [language, setLanguage] = useState(() => getLanguage(fileId, folderId));
     const [code, setCode] = useState(() => getDefaultCode(fileId, folderId));
@@ -46,31 +47,27 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
     const sessionRef = ref(database, `sessions/${sessionId}`);
 
     useEffect(() => {
-        if (!sessionId) {
-            console.log("No session ID provided, real-time collaboration is disabled.");
-            const currentCode = getDefaultCode(fileId, folderId);
-            setCode(currentCode);
-            codeRef.current = currentCode;
-            setLanguage(getLanguage(fileId, folderId));
-            return;
-        }
+        const currentCode = getDefaultCode(fileId, folderId);
+        const currentLanguage = getLanguage(fileId, folderId);
+        setCode(currentCode);
+        codeRef.current = currentCode;
+        setLanguage(currentLanguage);
+    }, [fileId, folderId, getDefaultCode, getLanguage]);
+
+    useEffect(() => {
+        if (!sessionId) return;
 
         const unsubscribe = onValue(sessionRef, (snapshot) => {
             const sessionData = snapshot.val();
 
             if (sessionData !== null) {
-                if (sessionData.code !== undefined) {
+                if (sessionData.code !== undefined && sessionData.code !== codeRef.current) {
                     setCode(sessionData.code);
                     codeRef.current = sessionData.code;
-                    console.log("Code updated from Firebase.");
                 }
-                if (sessionData.language !== undefined) {
+                if (sessionData.language !== undefined && sessionData.language !== language) {
                     setLanguage(sessionData.language);
-                    console.log("Language updated from Firebase:", sessionData.language);
                 }
-
-            } else {
-                console.log("No session data found in Firebase for this session. Starting fresh?");
             }
         }, (error) => {
             console.error("Firebase Realtime Database listener failed:", error);
@@ -78,10 +75,8 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
 
         return () => {
             unsubscribe();
-            console.log("Firebase listener unsubscribed.");
         };
-
-    }, [sessionId, fileId, folderId, getDefaultCode, getLanguage]);
+    }, [sessionId, fileId, folderId, language, sessionRef]);
 
 
     useEffect(() => {
@@ -119,16 +114,17 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
     }, [isFullScreen]);
 
     const onChangeCode = (newCode) => {
-        setCode(newCode);
-        codeRef.current = newCode;
+        if (newCode !== codeRef.current) {
+            setCode(newCode);
+            codeRef.current = newCode;
 
-        if (sessionId) {
-            update(sessionRef, {
-                code: newCode
-            })
-                .catch((error) => {
+            if (sessionId) {
+                update(sessionRef, {
+                    code: newCode
+                }).catch((error) => {
                     console.error("Failed to write code to Firebase:", error);
                 });
+            }
         }
     }
 
@@ -149,7 +145,9 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
                 setCode(importedCode);
                 codeRef.current = importedCode;
                 if (sessionId) {
-                    set(sessionRef, importedCode)
+                    update(sessionRef, {
+                        code: importedCode
+                    })
                         .catch((error) => {
                             console.error("Failed to write imported code to Firebase:", error);
                         });
@@ -272,8 +270,8 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
             editFileTitle(newTitleText.trim(), folderId, fileId);
             setIsEditingTitle(false);
         } else {
-             alert("Title cannot be empty!");
-             setIsEditingTitle(false);
+            alert("Title cannot be empty!");
+            setIsEditingTitle(false);
         }
     };
 
@@ -284,7 +282,38 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
     };
 
     const handleTitleInputBlur = () => {
-       saveTitle();
+        saveTitle();
+    };
+
+    const saveSessionAsNewTemplate = () => {
+        if (sessionId) {
+            if (!codeRef.current || codeRef.current.trim() === '') {
+                alert("There is no code in the session to save.");
+                return;
+            }
+
+            const templateTitle = prompt("Enter a name for the new template:");
+
+            if (templateTitle && templateTitle.trim()) {
+                const folderName = prompt(`Enter a name for the folder (a new folder with "${templateTitle}" will be created inside):`, "Saved Sessions");
+
+                if (folderName && folderName.trim()) {
+                    createNewProject({
+                        folderName: folderName.trim(),
+                        templateName: templateTitle.trim(),
+                        language: language,
+                    }, codeRef.current);
+
+                    alert(`Session saved as a new template "${templateTitle.trim()}" in folder "${folderName.trim()}"!`);
+                } else {
+                    alert("Folder name cannot be empty. Save cancelled.");
+                }
+            } else {
+                alert("Template name cannot be empty. Save cancelled.");
+            }
+        } else {
+            alert("You are not in a collaborative session.");
+        }
     };
 
     return (
@@ -304,14 +333,23 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
                     ) : (
                         <>
                             <b className='title'>{templateName}</b>
-                            <span onClick={handleEditClick} style={{ cursor: 'pointer', marginLeft: '5px' }}>
-                                <FontAwesomeIcon icon={faEdit} />
-                            </span>
+                            {!sessionId && (
+                                <span onClick={handleEditClick} style={{ cursor: 'pointer', marginLeft: '5px' }}>
+                                    <FontAwesomeIcon icon={faEdit} />
+                                </span>
+                            )}
                         </>
                     )}
 
-                    <button onClick={onSaveCode}>Save Code</button>
+                    {!sessionId && (
+                        <button onClick={onSaveCode}>Save Code</button>
+                    )}
+
                     <button onClick={onStartNewCollaborationClick}>Start New Collaboration</button>
+
+                    {sessionId && (
+                        <button onClick={saveSessionAsNewTemplate}>Save Session As New Template</button>
+                    )}
                 </div>
                 <div className='editor-right-container'>
                     <select onChange={onChangeLanguage} value={language}>
