@@ -293,23 +293,26 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
             }
 
             const templateTitle = prompt("Enter a name for the new template:");
-
-            if (templateTitle && templateTitle.trim()) {
-                const folderName = prompt(`Enter a name for the folder (a new folder with "${templateTitle}" will be created inside):`, "Saved Sessions");
-
-                if (folderName && folderName.trim()) {
-                    createNewProject({
-                        folderName: folderName.trim(),
-                        templateName: templateTitle.trim(),
-                        language: language,
-                    }, codeRef.current);
-
-                    alert(`Session saved as a new template "${templateTitle.trim()}" in folder "${folderName.trim()}"!`);
-                } else {
-                    alert("Folder name cannot be empty. Save cancelled.");
-                }
-            } else {
+            if (!templateTitle || !templateTitle.trim()) {
                 alert("Template name cannot be empty. Save cancelled.");
+                return;
+            }
+
+            const folderName = prompt(
+                `Enter a name for the folder (will add to existing folder if it exists):`,
+                "Saved Sessions"
+            );
+
+            if (folderName && folderName.trim()) {
+                createNewProject({
+                    folderName: folderName.trim(),
+                    templateName: templateTitle.trim(),
+                    language: language,
+                }, codeRef.current);
+
+                alert(`Session saved as template "${templateTitle.trim()}" in folder "${folderName.trim()}"!`);
+            } else {
+                alert("Folder name cannot be empty. Save cancelled.");
             }
         } else {
             alert("You are not in a collaborative session.");

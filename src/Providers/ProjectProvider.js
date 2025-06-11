@@ -1,5 +1,5 @@
-import {createContext, useContext, useEffect, useState} from "react";
-import {v4} from "uuid";
+import { createContext, useContext, useEffect, useState } from "react";
+import { v4 } from "uuid";
 
 export const ProjectContext = createContext();
 
@@ -57,7 +57,7 @@ int main() {
 };
 
 
-export const ProjectProvider = ({children}) => {
+export const ProjectProvider = ({ children }) => {
     const [folders, setFolders] = useState(() => {
         const localData = localStorage.getItem('data');
         if (localData) {
@@ -67,21 +67,31 @@ export const ProjectProvider = ({children}) => {
     });
 
     const createNewProject = (newProject, initialCode) => {
-        const {folderName, templateName, language} = newProject;
+        const { folderName, templateName, language } = newProject;
+
+        const existingFolderIndex = folders.findIndex(
+            folder => folder.title.toLowerCase() === folderName.toLowerCase()
+        );
+
+        const newFile = {
+            id: v4(),
+            title: templateName,
+            code: initialCode !== undefined ? initialCode : defaultCodes[language],
+            language: language,
+        };
+
         const newFolders = [...folders];
 
-        newFolders.push({
-            id: v4(),
-            title: folderName,
-            files: [
-                {
-                    id: v4(),
-                    title: templateName,
-                    code: initialCode !== undefined ? initialCode : defaultCodes[language],
-                    language: language,
-                },
-            ],
-        });
+        if (existingFolderIndex >= 0) {
+            newFolders[existingFolderIndex].files.push(newFile);
+        } else {
+            newFolders.push({
+                id: v4(),
+                title: folderName,
+                files: [newFile],
+            });
+        }
+
         localStorage.setItem("data", JSON.stringify(newFolders));
         setFolders(newFolders);
     };
@@ -178,7 +188,7 @@ export const ProjectProvider = ({children}) => {
         return "//Error"
     }
 
-        const getFileName = (fileId, folderId) => {
+    const getFileName = (fileId, folderId) => {
         for (let i = 0; i < folders.length; i++) {
             if (folders[i].id === folderId) {
                 for (let j = 0; j < folders[i].files.length; j++) {
