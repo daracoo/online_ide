@@ -27,7 +27,7 @@ const fileExtensionMapping = {
     java: 'java',
 }
 
-export const EditorContainer = ({ fileId, folderId, runCode, sessionId }) => {
+export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartNewCollaboration }) => {
     const { getDefaultCode, getLanguage, updateLanguage, saveCode } = useContext(ProjectContext);
     const [language, setLanguage] = useState(() => getLanguage(fileId, folderId));
     const [code, setCode] = useState(() => getDefaultCode(fileId, folderId));
@@ -237,6 +237,7 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId }) => {
                     <b className='title'>{"Title"}</b>
                     <span><FontAwesomeIcon icon={faEdit} /></span>
                     <button onClick={onSaveCode}>Save Code</button>
+                    <button onClick={onStartNewCollaboration}>Start New Collaboration</button>
                 </div>
                 <div className='editor-right-container'>
                     <select onChange={onChangeLanguage} value={language}>

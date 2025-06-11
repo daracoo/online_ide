@@ -1,14 +1,17 @@
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import "./style.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileImport, faDownload} from '@fortawesome/free-solid-svg-icons';
 import {EditorContainer} from "./EditorContainer";
 import {useCallback, useState} from "react";
 import { makeSubmission } from "./service";
+import { v4 as uuidv4 } from 'uuid';
+
 
 export const EditorTemplate = () => {
     const params = useParams();
     const {fileId, folderId} = params;
+    const navigate = useNavigate();
     console.log('Route params:', { fileId, folderId });
 
     const queryParams = new URLSearchParams(window.location.search);
@@ -79,6 +82,16 @@ export const EditorTemplate = () => {
         });
     }, [input, callback]);
 
+    const startNewCollaborationSession = () => {
+        const newSessionId = uuidv4();
+        console.log("Generated new session ID:", newSessionId);
+
+        const currentPath = `/editor/${folderId}/${fileId}`;
+        navigate(`${currentPath}?sessionId=${newSessionId}`, { replace: true });
+
+        alert(`New collaboration session started! Share this URL: ${window.location.origin}${currentPath}?sessionId=${newSessionId}`);
+    };
+
     return (
         <div className="page-container">
             <div className="header-container">
@@ -91,6 +104,7 @@ export const EditorTemplate = () => {
                         folderId={folderId}
                         runCode={runCode}
                         sessionId={sessionId}
+                        onStartNewCollaboration={startNewCollaborationSession}
                     />
                 </div>
                 <div className="input-output-container">
