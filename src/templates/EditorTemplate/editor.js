@@ -86,15 +86,18 @@ export const EditorTemplate = () => {
         });
     }, [input, callback]);
 
-    const startNewCollaborationSession = (initialCodeContent) => {
+    const startNewCollaborationSession = (initialCodeContent, initialLanguage) => {
         const newSessionId = uuidv4();
         console.log("Generated new session ID:", newSessionId);
 
-        const newSessionCodeRef = ref(database, `sessions/${newSessionId}/code`);
+        const newSessionRef = ref(database, `sessions/${newSessionId}`);
 
-        set(newSessionCodeRef, initialCodeContent)
+       set(newSessionRef, {
+                code: initialCodeContent || '',
+                language: initialLanguage || 'javascript'
+            })
             .then(() => {
-                console.log("Initial code written to Firebase for new session:", newSessionId);
+                console.log("Initial session data written to Firebase for new session:", newSessionId);
 
                 const currentPath = `/editor/${folderId}/${fileId}`;
                 navigate(`${currentPath}?sessionId=${newSessionId}`, { replace: true });
@@ -102,7 +105,7 @@ export const EditorTemplate = () => {
                 alert(`New collaboration session started! Share this URL: ${window.location.origin}${currentPath}?sessionId=${newSessionId}`);
             })
             .catch((error) => {
-                console.error("Failed to write initial code to Firebase:", error);
+                console.error("Failed to write initial session data to Firebase:", error);
                 alert("Failed to start new collaboration session. Please try again.");
             });
     };

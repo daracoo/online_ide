@@ -11,7 +11,7 @@ import { Editor } from '@monaco-editor/react';
 import { useContext, useRef, useState, useEffect } from "react";
 import { ProjectContext } from "../../Providers/ProjectProvider";
 
-import { getDatabase, ref, onValue, set } from 'firebase/database';
+import { getDatabase, ref, onValue, set, update } from 'firebase/database';
 import app from '../../firebase';
 
 const editorOptions = {
@@ -40,7 +40,7 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
     const resizeTimeoutRef = useRef(null);
 
     const database = getDatabase(app);
-    const sessionCodeRef = ref(database, `sessions/${sessionId}/code`);
+    const sessionRef = ref(database, `sessions/${sessionId}`);
 
     useEffect(() => {
         if (!sessionId) {
@@ -48,17 +48,26 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
             const currentCode = getDefaultCode(fileId, folderId);
             setCode(currentCode);
             codeRef.current = currentCode;
+            setLanguage(getLanguage(fileId, folderId));
             return;
         }
 
-        const unsubscribe = onValue(sessionCodeRef, (snapshot) => {
-            const latestCode = snapshot.val();
-            if (latestCode !== null) {
-                setCode(latestCode);
-                codeRef.current = latestCode;
-                console.log("Code updated from Firebase:", latestCode);
+        const unsubscribe = onValue(sessionRef, (snapshot) => {
+            const sessionData = snapshot.val();
+
+            if (sessionData !== null) {
+                if (sessionData.code !== undefined) {
+                    setCode(sessionData.code);
+                    codeRef.current = sessionData.code;
+                    console.log("Code updated from Firebase.");
+                }
+                if (sessionData.language !== undefined) {
+                    setLanguage(sessionData.language);
+                    console.log("Language updated from Firebase:", sessionData.language);
+                }
+
             } else {
-                console.log("No code found in Firebase for this session. Starting fresh?");
+                console.log("No session data found in Firebase for this session. Starting fresh?");
             }
         }, (error) => {
             console.error("Firebase Realtime Database listener failed:", error);
@@ -68,7 +77,8 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
             unsubscribe();
             console.log("Firebase listener unsubscribed.");
         };
-    }, [sessionId, fileId, folderId, getDefaultCode]);
+
+    }, [sessionId, fileId, folderId, getDefaultCode, getLanguage]);
 
 
     useEffect(() => {
@@ -110,7 +120,9 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
         codeRef.current = newCode;
 
         if (sessionId) {
-            set(sessionCodeRef, newCode)
+            update(sessionRef, {
+                code: newCode
+            })
                 .catch((error) => {
                     console.error("Failed to write code to Firebase:", error);
                 });
@@ -134,7 +146,7 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
                 setCode(importedCode);
                 codeRef.current = importedCode;
                 if (sessionId) {
-                    set(sessionCodeRef, importedCode)
+                    set(sessionRef, importedCode)
                         .catch((error) => {
                             console.error("Failed to write imported code to Firebase:", error);
                         });
@@ -165,6 +177,15 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
         const newLanguage = e.target.value;
         setLanguage(newLanguage);
         updateLanguage(fileId, folderId, newLanguage);
+
+        if (sessionId) {
+            update(sessionRef, {
+                language: newLanguage
+            })
+                .catch((error) => {
+                    console.error("Failed to write language to Firebase:", error);
+                });
+        }
     };
 
     const onChangeTheme = (e) => {
@@ -230,6 +251,10 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
         };
     }, []);
 
+    const onStartNewCollaborationClick = () => {
+        onStartNewCollaboration(codeRef.current, language);
+    };
+
     return (
         <div ref={containerRef} className={`root-editor-container ${isFullScreen ? 'fullscreen' : ''}`}>
             <div className='editor-header'>
@@ -237,7 +262,7 @@ export const EditorContainer = ({ fileId, folderId, runCode, sessionId, onStartN
                     <b className='title'>{"Title"}</b>
                     <span><FontAwesomeIcon icon={faEdit} /></span>
                     <button onClick={onSaveCode}>Save Code</button>
-                    <button onClick={() => onStartNewCollaboration(codeRef.current)}>Start New Collaboration</button>
+                    <button onClick={onStartNewCollaborationClick}>Start New Collaboration</button>
                 </div>
                 <div className='editor-right-container'>
                     <select onChange={onChangeLanguage} value={language}>
