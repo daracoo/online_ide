@@ -11,6 +11,9 @@ import { Editor } from '@monaco-editor/react';
 import { useContext, useRef, useState, useEffect } from "react";
 import { ProjectContext } from "../../Providers/ProjectProvider";
 
+import { getDatabase, ref, onValue, set } from 'firebase/database';
+import app from '../../firebase';
+
 const editorOptions = {
     fontSize: 18,
     wordWrap: 'on',
@@ -24,7 +27,7 @@ const fileExtensionMapping = {
     java: 'java',
 }
 
-export const EditorContainer = ({ fileId, folderId, runCode }) => {
+export const EditorContainer = ({ fileId, folderId, runCode, sessionId }) => {
     const { getDefaultCode, getLanguage, updateLanguage, saveCode } = useContext(ProjectContext);
     const [language, setLanguage] = useState(() => getLanguage(fileId, folderId));
     const [code, setCode] = useState(() => getDefaultCode(fileId, folderId));
@@ -36,11 +39,37 @@ export const EditorContainer = ({ fileId, folderId, runCode }) => {
     const originalDimensionsRef = useRef(null);
     const resizeTimeoutRef = useRef(null);
 
+    const database = getDatabase(app);
+    const sessionCodeRef = ref(database, `sessions/${sessionId}/code`);
+
     useEffect(() => {
-        const currentCode = getDefaultCode(fileId, folderId);
-        setCode(currentCode);
-        codeRef.current = currentCode;
-    }, [language, fileId, folderId, getDefaultCode]);
+        if (!sessionId) {
+            console.log("No session ID provided, real-time collaboration is disabled.");
+            const currentCode = getDefaultCode(fileId, folderId);
+            setCode(currentCode);
+            codeRef.current = currentCode;
+            return;
+        }
+
+        const unsubscribe = onValue(sessionCodeRef, (snapshot) => {
+            const latestCode = snapshot.val();
+            if (latestCode !== null) {
+                setCode(latestCode);
+                codeRef.current = latestCode;
+                console.log("Code updated from Firebase:", latestCode);
+            } else {
+                console.log("No code found in Firebase for this session. Starting fresh?");
+            }
+        }, (error) => {
+            console.error("Firebase Realtime Database listener failed:", error);
+        });
+
+        return () => {
+            unsubscribe();
+            console.log("Firebase listener unsubscribed.");
+        };
+    }, [sessionId, fileId, folderId, getDefaultCode]);
+
 
     useEffect(() => {
         const handleResize = () => {
@@ -79,6 +108,13 @@ export const EditorContainer = ({ fileId, folderId, runCode }) => {
     const onChangeCode = (newCode) => {
         setCode(newCode);
         codeRef.current = newCode;
+
+        if (sessionId) {
+            set(sessionCodeRef, newCode)
+                .catch((error) => {
+                    console.error("Failed to write code to Firebase:", error);
+                });
+        }
     }
 
     const importCode = (event) => {
@@ -97,6 +133,12 @@ export const EditorContainer = ({ fileId, folderId, runCode }) => {
                 const importedCode = value.target.result;
                 setCode(importedCode);
                 codeRef.current = importedCode;
+                if (sessionId) {
+                    set(sessionCodeRef, importedCode)
+                        .catch((error) => {
+                            console.error("Failed to write imported code to Firebase:", error);
+                        });
+                }
             }
         } else {
             alert("Please choose a program file!");
@@ -229,7 +271,7 @@ export const EditorContainer = ({ fileId, folderId, runCode }) => {
                     <span><FontAwesomeIcon icon={faFileImport} /></span>
                     <span>Import Code</span>
                 </label>
-                <input type='file' id='import-code' style={{display: 'none'}} onChange={importCode}></input>
+                <input type='file' id='import-code' style={{ display: 'none' }} onChange={importCode}></input>
                 <button className='btn' onClick={exportCode}>
                     <span><FontAwesomeIcon icon={faDownload} /></span>
                     <span>Export Code</span>

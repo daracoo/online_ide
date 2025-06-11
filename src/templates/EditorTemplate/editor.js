@@ -10,6 +10,11 @@ export const EditorTemplate = () => {
     const params = useParams();
     const {fileId, folderId} = params;
     console.log('Route params:', { fileId, folderId });
+
+    const queryParams = new URLSearchParams(window.location.search);
+    const sessionId = queryParams.get('sessionId');
+    console.log('URL Session ID:', sessionId);
+
     const [input, setInput] = useState('')
     const [output, setOutput] = useState('')
     const [showLoader, setShowLoader] = useState(false);
@@ -81,7 +86,12 @@ export const EditorTemplate = () => {
             </div>
             <div className="content-container">
                 <div className="editor-container">
-                    <EditorContainer fileId={fileId} folderId={folderId} runCode={runCode}/>
+                    <EditorContainer
+                        fileId={fileId}
+                        folderId={folderId}
+                        runCode={runCode}
+                        sessionId={sessionId}
+                    />
                 </div>
                 <div className="input-output-container">
                     <div className="input-header">
